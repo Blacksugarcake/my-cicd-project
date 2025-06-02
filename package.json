@@ -6,16 +6,21 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "jest",
+    "test": "jest --detectOpenHandles --forceExit",
     "test:watch": "jest --watch",
     "build": "echo '建置完成！'"
   },
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.18.2"
   },
   "devDependencies": {
     "jest": "^29.0.0",
     "nodemon": "^3.0.0",
     "supertest": "^6.3.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "detectOpenHandles": true,
+    "forceExit": true
   }
 }
