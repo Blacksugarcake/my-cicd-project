@@ -1,0 +1,21 @@
+{
+  "name": "my-cicd-project",
+  "version": "1.0.0",
+  "description": "學習 CI/CD 的簡單專案",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "build": "echo '建置完成！'"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "nodemon": "^3.0.0",
+    "supertest": "^6.3.0"
+  }
+}
