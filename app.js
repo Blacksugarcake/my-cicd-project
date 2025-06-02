@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
   res.send(`
@@ -19,11 +19,12 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 啟動 server 並儲存為變數
-const server = app.listen(port, () => {
-  console.log(`🚀 Server running at http://localhost:${port}`);
-});
+// 👉 只在直接執行時啟動 server，測試 require 不會執行
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`🚀 Server running at http://localhost:${port}`);
+  });
+}
 
-// 匯出 app 和 server，供測試用
-module.exports = { app, server };
+module.exports = app;
 
