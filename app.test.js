@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('./app'); // 只匯入 app，不會自動啟動 server
+const app = require('./app');
 
 describe('API 測試', () => {
   test('首頁應該回傳 200 狀態', async () => {
