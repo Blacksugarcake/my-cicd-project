@@ -1,7 +1,11 @@
 const request = require('supertest');
-const app = require('./app');
+const { app, server } = require('./app');
 
 describe('API 測試', () => {
+  afterAll(() => {
+    server.close(); // 關閉 server，避免測試結束後仍開著
+  });
+
   test('首頁應該回傳 200 狀態', async () => {
     const response = await request(app).get('/');
     expect(response.status).toBe(200);
