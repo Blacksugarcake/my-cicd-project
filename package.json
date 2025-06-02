@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "jest",
+    "test": "jest --detectOpenHandles"
     "test:watch": "jest --watch",
     "build": "echo '建置完成！'"
   },
