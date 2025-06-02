@@ -19,10 +19,10 @@ jobs:
     
     steps:
     - name: 📥 檢出程式碼
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     
     - name: 🏗️ 設定 Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
@@ -34,13 +34,14 @@ jobs:
       run: npm test
     
     - name: 📊 上傳測試結果
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: test-results
         path: |
           coverage/
           test-results.xml
+        retention-days: 7
 
   # 建置階段
   build:
@@ -50,10 +51,10 @@ jobs:
     
     steps:
     - name: 📥 檢出程式碼
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     
     - name: 🏗️ 設定 Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
@@ -65,13 +66,13 @@ jobs:
       run: npm run build
     
     - name: 📊 上傳建置結果
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: build-files
         path: |
           app.js
           package.json
-          node_modules/
+        retention-days: 7
 
   # 部署階段（僅在 main 分支）
   deploy:
@@ -82,18 +83,19 @@ jobs:
     
     steps:
     - name: 📥 檢出程式碼
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     
     - name: 📥 下載建置結果
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: build-files
+        path: ./build
     
     - name: 🚀 模擬部署
       run: |
         echo "🚀 開始部署..."
         echo "📁 檢查檔案："
-        ls -la
+        ls -la ./build/
         echo "✅ 部署完成！"
         echo "🌐 應用程式已部署到: https://my-app.example.com"
     
@@ -113,12 +115,13 @@ jobs:
     
     steps:
     - name: 📥 檢出程式碼
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     
     - name: 🏗️ 設定 Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
     
     - name: 📦 安裝依賴
       run: npm ci
