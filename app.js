@@ -19,12 +19,9 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 👉 只在直接執行時啟動 server，測試 require 不會執行
-if (require.main === module) {
-  app.listen(port, () => {
-    console.log(`🚀 Server running at http://localhost:${port}`);
-  });
-}
+app.listen(port, () => {
+  console.log(`🚀 Server running at http://localhost:${port}`);
+});
 
 module.exports = app;
 
