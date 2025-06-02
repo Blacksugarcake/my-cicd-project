@@ -19,8 +19,11 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-app.listen(port, () => {
+// 啟動 server 並儲存為變數
+const server = app.listen(port, () => {
   console.log(`🚀 Server running at http://localhost:${port}`);
 });
 
-module.exports = app;
+// 匯出 app 和 server，供測試用
+module.exports = { app, server };
+
