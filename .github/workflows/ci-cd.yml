@@ -1,0 +1,134 @@
+name: CI/CD Pipeline
+
+# 觸發條件
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+# 環境變數
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # 測試階段
+  test:
+    name: 🧪 測試
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 檢出程式碼
+      uses: actions/checkout@v3
+    
+    - name: 🏗️ 設定 Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: 📦 安裝依賴
+      run: npm ci
+    
+    - name: 🧪 執行測試
+      run: npm test
+    
+    - name: 📊 上傳測試結果
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results
+        path: |
+          coverage/
+          test-results.xml
+
+  # 建置階段
+  build:
+    name: 🏗️ 建置
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: 📥 檢出程式碼
+      uses: actions/checkout@v3
+    
+    - name: 🏗️ 設定 Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: 📦 安裝依賴
+      run: npm ci
+    
+    - name: 🏗️ 執行建置
+      run: npm run build
+    
+    - name: 📊 上傳建置結果
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-files
+        path: |
+          app.js
+          package.json
+          node_modules/
+
+  # 部署階段（僅在 main 分支）
+  deploy:
+    name: 🚀 部署
+    runs-on: ubuntu-latest
+    needs: [test, build]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 檢出程式碼
+      uses: actions/checkout@v3
+    
+    - name: 📥 下載建置結果
+      uses: actions/download-artifact@v3
+      with:
+        name: build-files
+    
+    - name: 🚀 模擬部署
+      run: |
+        echo "🚀 開始部署..."
+        echo "📁 檢查檔案："
+        ls -la
+        echo "✅ 部署完成！"
+        echo "🌐 應用程式已部署到: https://my-app.example.com"
+    
+    - name: 📝 部署通知
+      run: |
+        echo "📨 發送部署通知..."
+        echo "✅ 專案 ${{ github.repository }} 已成功部署"
+        echo "🔗 提交: ${{ github.sha }}"
+        echo "👤 作者: ${{ github.actor }}"
+
+  # 部署後測試
+  post-deploy-test:
+    name: 🔍 部署後測試
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 檢出程式碼
+      uses: actions/checkout@v3
+    
+    - name: 🏗️ 設定 Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    
+    - name: 📦 安裝依賴
+      run: npm ci
+    
+    - name: 🚀 啟動應用程式
+      run: |
+        npm start &
+        sleep 5
+    
+    - name: 🔍 健康檢查
+      run: |
+        curl -f http://localhost:3000/api/health || exit 1
+        echo "✅ 應用程式健康檢查通過！"
